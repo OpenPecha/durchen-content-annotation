@@ -8,8 +8,8 @@
   <br>
 </h1>
 
-## _Project Name_
-_The project name should match its code's capability so that new users can easily understand what it does._
+## durchen-content-annotation
+Durchen content annotation tool for OpenPecha.
 
 ## Owner(s)
 
@@ -35,9 +35,9 @@ _Change to the owner(s) of the new repo. (This template's owners are:)_
 ## Project description
 _Use one of these:_
 
-With _Project Name_ you can _verb_ _noun_...
+With durchen-content-annotation you can annotate durchen content...
 
-_Project Name_ helps you _verb_ _noun_...
+durchen-content-annotation helps you annotate durchen content...
 
 
 ## Who this project is for
@@ -45,17 +45,17 @@ This project is intended for _target user_ who wants to _user objective_.
 
 
 ## Project dependencies
-Before using _Project Name_, ensure you have:
+Before using durchen-content-annotation, ensure you have:
 * python _version_
 * _Prerequisite 2_
 * _Prerequisite 3..._
 
 
 ## Instructions for use
-Get started with _Project Name_ by _(write the first step a user needs to start using the project. Use a verb to start.)_.
+Get started with durchen-content-annotation by installing the package and following the setup instructions below.
 
 
-### Install _Project Name_
+### Install durchen-content-annotation
 1. _Write the step here._ 
 
     _Explanatory text here_ 
@@ -69,17 +69,17 @@ Get started with _Project Name_ by _(write the first step a user needs to start 
     b. _Substep 2_
 
 
-### Configure _Project Name_
+### Configure durchen-content-annotation
 1. _Write the step here._
 2. _Write the step here._
 
 
-### Run _Project Name_
+### Run durchen-content-annotation
 1. _Write the step here._
 2. _Write the step here._
 
 
-### Troubleshoot _Project Name_
+### Troubleshoot durchen-content-annotation
 1. _Write the step here._
 2. _Write the step here._
 
@@ -145,4 +145,4 @@ For more information:
 
 
 ## Terms of use
-_Project Name_ is licensed under the [MIT License](/LICENSE.md).
+durchen-content-annotation is licensed under the [MIT License](/LICENSE.md).
