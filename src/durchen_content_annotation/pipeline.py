@@ -8,8 +8,6 @@ from durchen_content_annotation.annotation import (
     get_all_segments_with_tags,
 )
 
-
-
 def main():
     """Run annotation functions with data files."""
     # Paths to data files
@@ -25,15 +23,13 @@ def main():
         text = f.read()
     
     with open(durchen_path, 'r', encoding='utf-8') as f:
-        durchen_data = json.load(f)["data"]
+        durchen_annotation = json.load(f)["data"]
     
     with open(segmentation_path, 'r', encoding='utf-8') as f:
-        segmentation_data = json.load(f)["data"]
+        segmentation_annotation = json.load(f)["data"]
  
-    
-    
     segments_with_tags = get_all_segments_with_tags(
-        text, segmentation_data, durchen_data=durchen_data
+        text, segmentation_annotation, durchen_annotation
     )
  
     # Save results to file (optional)

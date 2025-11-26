@@ -4,7 +4,7 @@ import re
 from typing import List, Dict, Any
 
 
-def insert_durchen_tags(text: str, durchen_data: List[Dict[str, Any]]) -> str:
+def insert_durchen_tags(text: str, durchen_annotation: List[Dict[str, Any]]) -> str:
     """
     Insert durchen note tags into text at segment end positions.
     
@@ -29,7 +29,7 @@ def insert_durchen_tags(text: str, durchen_data: List[Dict[str, Any]]) -> str:
         'I have a d<A is good>ream'
     """
     # Build tag position map using helper function
-    tag_position_map = _build_tag_position_map_from_durchen(durchen_data)
+    tag_position_map = _build_tag_position_map_from_durchen(durchen_annotation)
     
     # Insert tags starting from the end (descending order) to avoid index shifting
     # Reverse the list since tag_position_map is sorted in ascending order
@@ -42,7 +42,7 @@ def insert_durchen_tags(text: str, durchen_data: List[Dict[str, Any]]) -> str:
     return annotated_text
 
 
-def _build_tag_position_map_from_durchen(durchen_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _build_tag_position_map_from_durchen(durchen_annotation: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Build tag position map directly from durchen_data.
     
@@ -58,10 +58,10 @@ def _build_tag_position_map_from_durchen(durchen_data: List[Dict[str, Any]]) -> 
         List of dictionaries with 'tag' and 'original_pos' keys, sorted by original_pos.
     """
     tag_position_map = []
-    for item in durchen_data:
+    for item in durchen_annotation:
         end_index = item["span"]["end"]
         note = item["note"]
-        marker = f'<sup class="footnote-marker"></sup><i class="footnote">{note}</i>'
+        marker = f"<sup class='footnote-marker'></sup><i class='footnote'>{note}</i>"
 
         tag_position_map.append({
             'tag': marker,
@@ -126,8 +126,8 @@ def get_segment_with_tags(
 
 def get_all_segments_with_tags(
     original_text: str,
-    segmentation_data: List[Dict[str, Any]],
-    durchen_data: List[Dict[str, Any]] = None
+    segmentation_annotation: List[Dict[str, Any]],
+    durchen_annotation: List[Dict[str, Any]] = None
 ) -> List[Dict[str, Any]]:
     """
     Extract all segments from segmentation data with durchen tags included.
@@ -149,13 +149,13 @@ def get_all_segments_with_tags(
     """
     # Build tag position map once (cached for reuse)
     # Use durchen_data if provided for better performance
-    if durchen_data is not None:
-        tag_position_map = _build_tag_position_map_from_durchen(durchen_data)
+    if durchen_annotation is not None:
+        tag_position_map = _build_tag_position_map_from_durchen(durchen_annotation)
    
     
     segments_with_tags = []
     
-    for segment in segmentation_data:
+    for segment in segmentation_annotation:
         span = segment["span"]
         start = span["start"]
         end = span["end"]
