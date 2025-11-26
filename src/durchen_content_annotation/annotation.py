@@ -168,7 +168,6 @@ def get_all_segments_with_tags(
         # Create new segment dict with content
         segment_with_content = {
             "id": segment["id"],
-            "span": span,
             "content": content
         }
         

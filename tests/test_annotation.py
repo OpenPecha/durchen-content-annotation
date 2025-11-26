@@ -139,13 +139,11 @@ def test_get_all_segments_with_tags():
     
     # First segment [0, 20] should include tag at position 10
     assert segments[0]["id"] == "seg1"
-    assert segments[0]["span"] == {"start": 0, "end": 20}
     assert '<sup class="footnote-marker"></sup><i class="footnote">A</i>' in segments[0]["content"]
     assert '<sup class="footnote-marker"></sup><i class="footnote">B</i>' not in segments[0]["content"]
     
     # Second segment [20, 40] should include tag at position 30
     assert segments[1]["id"] == "seg2"
-    assert segments[1]["span"] == {"start": 20, "end": 40}
     assert '<sup class="footnote-marker"></sup><i class="footnote">B</i>' in segments[1]["content"]
     assert '<sup class="footnote-marker"></sup><i class="footnote">A</i>' not in segments[1]["content"]
     
