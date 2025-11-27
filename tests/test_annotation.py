@@ -155,3 +155,115 @@ def test_get_all_segments_with_tags():
     content_without_tags_1 = re.sub(r'<sup[^>]*></sup><i[^>]*>.*?</i>', '', segments[1]["content"])
     assert content_without_tags_1 == original_text[20:40]
 
+
+def test_get_segment_with_tags_excludes_tag_at_start():
+    """Test that tags at the exact start position are excluded (start < pos, not <=)."""
+    original_text = "I have a dream to become the world best singer"
+    
+    durchen_data = [
+        {"span": {"start": 0, "end": 0}, "note": "Tag at start"},
+        {"span": {"start": 0, "end": 5}, "note": "Tag just after start"},
+        {"span": {"start": 0, "end": 10}, "note": "Tag at position 10"},
+    ]
+    
+    tag_position_map = _build_tag_position_map_from_durchen(durchen_data)
+    
+    # Extract segment [0, 15] - tag at position 0 should be EXCLUDED
+    # Tag at position 5 should be INCLUDED
+    # Tag at position 10 should be INCLUDED
+    segment = get_segment_with_tags(original_text, tag_position_map, 0, 15)
+    
+    # Tag at exact start (position 0) should NOT be included
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag at start</i>' not in segment
+    
+    # Tags after start should be included
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag just after start</i>' in segment
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag at position 10</i>' in segment
+    
+    # Verify original content is present
+    content_without_tags = re.sub(r'<sup[^>]*></sup><i[^>]*>.*?</i>', '', segment)
+    assert content_without_tags == original_text[0:15]
+
+
+def test_get_segment_with_tags_boundary_conditions():
+    """Test boundary conditions: tag at start (excluded) vs tag just after start (included)."""
+    original_text = "Hello world"
+    
+    durchen_data = [
+        {"span": {"start": 0, "end": 0}, "note": "At start"},
+        {"span": {"start": 0, "end": 1}, "note": "Just after start"},
+        {"span": {"start": 0, "end": 5}, "note": "At end"},
+    ]
+    
+    tag_position_map = _build_tag_position_map_from_durchen(durchen_data)
+    
+    # Extract segment [0, 5]
+    segment = get_segment_with_tags(original_text, tag_position_map, 0, 5)
+    
+    # Tag at exact start (position 0) should be EXCLUDED
+    assert '<sup class="footnote-marker"></sup><i class="footnote">At start</i>' not in segment
+    
+    # Tags after start should be INCLUDED
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Just after start</i>' in segment
+    assert '<sup class="footnote-marker"></sup><i class="footnote">At end</i>' in segment
+
+
+def test_get_segment_with_tags_non_zero_start():
+    """Test that tags at non-zero start positions are also excluded correctly."""
+    original_text = "I have a dream to become the world best singer"
+    
+    durchen_data = [
+        {"span": {"start": 5, "end": 10}, "note": "Tag at 10"},
+        {"span": {"start": 5, "end": 15}, "note": "Tag at 15"},
+        {"span": {"start": 5, "end": 20}, "note": "Tag at 20"},
+    ]
+    
+    tag_position_map = _build_tag_position_map_from_durchen(durchen_data)
+    
+    # Extract segment [10, 25] - tag at position 10 should be EXCLUDED (start < pos)
+    # Tag at position 15 should be INCLUDED
+    # Tag at position 20 should be INCLUDED
+    segment = get_segment_with_tags(original_text, tag_position_map, 10, 25)
+    
+    # Tag at exact start (position 10) should NOT be included
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag at 10</i>' not in segment
+    
+    # Tags after start should be included
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag at 15</i>' in segment
+    assert '<sup class="footnote-marker"></sup><i class="footnote">Tag at 20</i>' in segment
+    
+    # Verify original content is present
+    content_without_tags = re.sub(r'<sup[^>]*></sup><i[^>]*>.*?</i>', '', segment)
+    assert content_without_tags == original_text[10:25]
+
+
+def test_get_all_segments_with_tags_excludes_tags_at_start():
+    """Test that get_all_segments_with_tags excludes tags at segment start positions."""
+    original_text = "I have a dream to become the world best singer"
+    
+    durchen_data = [
+        {"span": {"start": 0, "end": 0}, "note": "At seg1 start"},
+        {"span": {"start": 0, "end": 5}, "note": "After seg1 start"},
+        {"span": {"start": 0, "end": 20}, "note": "At seg2 start"},
+        {"span": {"start": 0, "end": 25}, "note": "After seg2 start"},
+    ]
+    
+    segmentation_data = [
+        {"id": "seg1", "span": {"start": 0, "end": 20}},
+        {"id": "seg2", "span": {"start": 20, "end": 40}},
+    ]
+    
+    segments = get_all_segments_with_tags(
+        original_text, segmentation_data, durchen_data=durchen_data
+    )
+    
+    # First segment [0, 20] - tag at position 0 should be EXCLUDED
+    assert segments[0]["id"] == "seg1"
+    assert '<sup class="footnote-marker"></sup><i class="footnote">At seg1 start</i>' not in segments[0]["content"]
+    assert '<sup class="footnote-marker"></sup><i class="footnote">After seg1 start</i>' in segments[0]["content"]
+    
+    # Second segment [20, 40] - tag at position 20 should be EXCLUDED
+    assert segments[1]["id"] == "seg2"
+    assert '<sup class="footnote-marker"></sup><i class="footnote">At seg2 start</i>' not in segments[1]["content"]
+    assert '<sup class="footnote-marker"></sup><i class="footnote">After seg2 start</i>' in segments[1]["content"]
+

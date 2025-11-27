@@ -96,10 +96,11 @@ def get_segment_with_tags(
     """
     original_segment = original_text[start:end]
     
-    # Filter tags that fall within [start, end] range
+    # Filter tags that fall within (start, end] range
+    # Note: start is exclusive, end is inclusive
     relevant_tags = [
         tag_info for tag_info in tag_position_map
-        if start <= tag_info['original_pos'] <= end
+        if start < tag_info['original_pos'] <= end
     ]
     
     if not relevant_tags:
